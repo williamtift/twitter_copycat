@@ -16,6 +16,23 @@ class StyledButton extends StatelessWidget {
       );
 }
 
+class TitleCreateAndLoginScreens extends StatelessWidget {
+  const TitleCreateAndLoginScreens(this.texto);
+  final String texto;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+      padding: EdgeInsets.all(40),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 2.0),
+        child: Text(
+          texto,
+          style: const TextStyle(
+              fontSize: 25, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+      ));
+}
+
 class TextoInitialScreen extends StatelessWidget {
   const TextoInitialScreen(this.texto);
   final String texto;
@@ -70,85 +87,37 @@ class DividerGris extends StatelessWidget {
   }
 }
 
-class BloqueDeBotones extends StatelessWidget {
-  const BloqueDeBotones({Key? key}) : super(key: key);
+class CartelProblema extends StatelessWidget {
+  const CartelProblema(this.titulo, this.mensaje);
+  final String titulo;
+  final String mensaje;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
-          child: ElevatedButton(
-              style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.white))),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.white)),
-              onPressed: () {},
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FaIcon(FontAwesomeIcons.google,
-                            color: Colors.orange, size: 20),
-                        TextoBotonesInitialScreen(
-                            "Sign in with Google", Colors.black)
-                      ],
-                    ),
-                  )
-                ],
-              )),
+  Widget build(BuildContext context) => AlertDialog(
+        title: Text(
+          titulo,
+          style: const TextStyle(fontSize: 24),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            DividerGris(),
-            Text(
-              "Or",
-              style: TextStyle(color: colorGrisDeImagenPrueba),
-            ),
-            DividerGris(),
-          ],
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40),
-          child: ElevatedButton(
-              style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                          side: BorderSide(color: Colors.blueAccent))),
-                  backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.blueAccent)),
-              onPressed: () {},
-              child: Row(
-                children: [
-                  Expanded(
-                      child: Center(
-                          child: TextoBotonesInitialScreen(
-                              "Create Account", Colors.white)))
-                ],
-              )),
-        ),
-        //Opcion de logueo
-        Padding(
-            padding: EdgeInsets.only(top: 50, bottom: 20, left: 40),
-            child: Row(children: [
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
               Text(
-                "Have an account already? ",
-                style: TextStyle(color: colorGrisDeImagenPrueba),
+                mensaje,
+                style: const TextStyle(fontSize: 18),
               ),
-              GestureDetector(
-                  child: Text(" Log in",
-                      style: TextStyle(color: Colors.blueAccent)),
-                  onTap: () {}),
-            ])),
-      ],
-    );
-  }
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          StyledButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              'OK',
+              style: TextStyle(color: Theme.of(context).primaryColor),
+            ),
+          ),
+        ],
+      );
 }
