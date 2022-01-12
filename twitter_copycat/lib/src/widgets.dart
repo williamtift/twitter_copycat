@@ -44,7 +44,8 @@ class TextoBotonesInitialScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 2.0, top: 2.0, left: 10, right: 10.0),
+        padding:
+            const EdgeInsets.only(bottom: 2.0, top: 2.0, left: 10, right: 10.0),
         child: Text(
           texto,
           style: TextStyle(
@@ -134,6 +135,19 @@ class BloqueDeBotones extends StatelessWidget {
                 ],
               )),
         ),
+        //Opcion de logueo
+        Padding(
+            padding: EdgeInsets.only(top: 50, bottom: 20, left: 40),
+            child: Row(children: [
+              Text(
+                "Have an account already? ",
+                style: TextStyle(color: colorGrisDeImagenPrueba),
+              ),
+              GestureDetector(
+                  child: Text(" Log in",
+                      style: TextStyle(color: Colors.blueAccent)),
+                  onTap: () {}),
+            ])),
       ],
     );
   }
