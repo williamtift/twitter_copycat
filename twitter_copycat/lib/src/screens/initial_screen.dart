@@ -3,25 +3,16 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter_copycat/src/colores.dart';
 import 'package:twitter_copycat/src/widgets.dart';
 import '../logica.dart';
-import '../datatypes.dart';
 import 'crear_cuenta_screen.dart';
 import 'log_in_screen.dart';
+import 'home_screen.dart';
 
 import 'package:provider/provider.dart';
-import '../../firebase_options.dart';
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({
     Key? key,
-    required this.createAccount,
   }) : super(key: key);
-
-  final void Function(
-    DtUsuario usuario,
-    String password,
-    void Function(Exception e) error,
-    BuildContext context,
-  ) createAccount;
 
   @override
   _InitialScreenState createState() => _InitialScreenState();
@@ -56,19 +47,27 @@ class _InitialScreenState extends State<InitialScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: FaIcon(FontAwesomeIcons.twitter,
-              color: Colors.blueAccent, size: 35),
-        ),
-        backgroundColor: Color.fromRGBO(18, 18, 18, 1),
-        body: Column(
-          children: [
-            TextoInitialScreen("See what's happening in the world right now."),
-            BloqueDeBotones(crearCuenta: _crearCuenta, iniciarSesion: _iniciarSesion),
-          ],
-        ));
+    return Consumer<ApplicationState>(builder: (context, appState, _) {
+      if (appState.usuario != null) {
+        return HomeScreen(usuario: appState.usuario!, publicarTweet: appState.publicarTweet, signOut: appState.signOut);
+      } else {
+        return Scaffold(
+            appBar: AppBar(
+              elevation: 0,
+              title: FaIcon(FontAwesomeIcons.twitter,
+                  color: Colors.blueAccent, size: 35),
+            ),
+            backgroundColor: Color.fromRGBO(18, 18, 18, 1),
+            body: Column(
+              children: [
+                TextoInitialScreen(
+                    "See what's happening in the world right now."),
+                BloqueDeBotones(
+                    crearCuenta: _crearCuenta, iniciarSesion: _iniciarSesion),
+              ],
+            ));
+      }
+    });
   }
 }
 
@@ -153,9 +152,10 @@ class BloqueDeBotones extends StatelessWidget {
                 style: TextStyle(color: colorGrisDeImagenPrueba),
               ),
               GestureDetector(
-                  child: Text(" Log in",
-                      style: TextStyle(color: Colors.blueAccent)),
-                  onTap: () => iniciarSesion(),),
+                child:
+                    Text(" Log in", style: TextStyle(color: Colors.blueAccent)),
+                onTap: () => iniciarSesion(),
+              ),
             ])),
       ],
     );

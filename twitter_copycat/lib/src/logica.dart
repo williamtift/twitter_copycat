@@ -18,8 +18,36 @@ class ApplicationState extends ChangeNotifier {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    FirebaseAuth.instance.userChanges().listen((user) {});
+    FirebaseAuth.instance.userChanges().listen((user) {
+      if (user != null) {
+        if (FirebaseAuth.instance.currentUser!.displayName != null) {
+          //Esta condicion esta porque una vez creas un usuario, demora en guardarse los datos en la base de datos
+        String uid = FirebaseAuth.instance.currentUser!.uid;
+        String name = FirebaseAuth.instance.currentUser!.displayName!;
+        String email = FirebaseAuth.instance.currentUser!.email!;
+
+        _usuarioSubscription = FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(uid)
+            .snapshots()
+            .listen((document) {
+          _usuario =
+              DtUsuario(uid, name, email, document.data()!['birthDate'] as String);
+        });
+        }
+      } else {
+        _usuarioSubscription?.cancel();
+        _usuario = null;
+      }
+      notifyListeners();
+    });
   }
+
+  DtUsuario? _usuario;
+  DtUsuario? get usuario => _usuario;
+
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
+      _usuarioSubscription;
 
   void logIn(
       String email,
@@ -33,7 +61,6 @@ class ApplicationState extends ChangeNotifier {
       );
 
       Navigator.of(context).pop();
-      
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
@@ -73,4 +100,10 @@ class ApplicationState extends ChangeNotifier {
       errorCallback(e);
     }
   }
+
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+  }
+
+  void publicarTweet(String tweet) {}
 }
