@@ -17,6 +17,7 @@ class InitialScreen extends StatefulWidget {
 
   final void Function(
     DtUsuario usuario,
+    String password,
     void Function(Exception e) error,
     BuildContext context,
   ) createAccount;

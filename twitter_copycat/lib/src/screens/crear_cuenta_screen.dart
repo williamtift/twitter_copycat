@@ -16,6 +16,7 @@ class CrearCuentaScreen extends StatefulWidget {
 
   final void Function(
     DtUsuario usuario,
+    String password,
     void Function(Exception e) error,
     BuildContext context,
   ) createAccount;
@@ -44,14 +45,17 @@ class _CrearCuentaScreenState extends State<CrearCuentaScreen> {
         backgroundColor: Color.fromRGBO(18, 18, 18, 1),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TitleCreateAndLoginScreens("Create your account"),
             RegisterForm(
               registerAccount: (
                 usuario,
+                password,
               ) {
                 widget.createAccount(
                     usuario,
+                    password,
                     (e) => _showErrorDialog(
                         context, 'Failed to create account', e),
                     context);
@@ -66,7 +70,7 @@ class RegisterForm extends StatefulWidget {
   const RegisterForm({
     required this.registerAccount,
   });
-  final void Function(DtUsuario) registerAccount;
+  final void Function(DtUsuario, String) registerAccount;
   @override
   _RegisterFormState createState() => _RegisterFormState();
 }
@@ -74,7 +78,7 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
   final _formKey = GlobalKey<FormState>(debugLabel: '_RegisterFormState');
   final _nameController = TextEditingController();
-  final _phoneEmailController = TextEditingController();
+  final _emailController = TextEditingController();
   DateTime? _selectedDate;
   final _passwordController = TextEditingController();
   final _verifyPasswordController = TextEditingController();
@@ -98,15 +102,16 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 15),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              //crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
@@ -136,18 +141,18 @@ class _RegisterFormState extends State<RegisterForm> {
                   child: TextFormField(
                     cursorColor: Colors.blueAccent,
                     style: TextStyle(color: Colors.white),
-                    controller: _phoneEmailController,
+                    controller: _emailController,
                     decoration: InputDecoration(
                         enabledBorder: UnderlineInputBorder(
                             borderSide:
                                 BorderSide(color: colorGrisDeImagenPrueba)),
                         focusedBorder: UnderlineInputBorder(
                             borderSide: BorderSide(color: Colors.blueAccent)),
-                        hintText: 'Phone number or email address',
+                        hintText: 'Email address',
                         hintStyle: TextStyle(color: colorGrisDeImagenPrueba)),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Enter your phone number or email to continue';
+                        return 'Enter your email address to continue';
                       }
                       return null;
                     },
@@ -213,55 +218,48 @@ class _RegisterFormState extends State<RegisterForm> {
                     },
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10, top: 60, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        style: ButtonStyle(
-                            shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                   Padding(padding: EdgeInsets.only(top: 40), child: 
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(18.0),
                                     side:
                                         BorderSide(color: Colors.blueAccent))),
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.blueAccent)),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate() &&
-                              _selectedDate != null) {
-                            widget.registerAccount(
-                              DtUsuario(
-                                  "",
-                                  _nameController.toString(),
-                                  !_phoneEmailController
-                                          .toString()
-                                          .contains('@')
-                                      ? _phoneEmailController.toString()
-                                      : null,
-                                  _phoneEmailController.toString().contains('@')
-                                      ? _phoneEmailController.toString()
-                                      : null,
-                                  _selectedDate!
-                                      .toLocal()
-                                      .toString()
-                                      .split(' ')[0]),
-                            );
-                          }
-                        },
-                        child: const Text('Create'),
-                        
-                      ),
-                      
-                    ],
-                  ),
-                ),
-              ],
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.blueAccent)),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate() &&
+                          _selectedDate != null) {
+                        widget.registerAccount(
+                          DtUsuario(
+                              "",
+                              _nameController.text,
+                              _emailController.text,
+                              _selectedDate!
+                                  .toLocal()
+                                  .toString()
+                                  .split(' ')[0]),
+                        _passwordController.text,
+                        );
+                      }
+                    },
+                    child:Text('Create'),
+                  ),),
+                ],
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

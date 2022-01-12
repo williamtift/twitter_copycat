@@ -112,6 +112,7 @@ class CartelProblema extends StatelessWidget {
           StyledButton(
             onPressed: () {
               Navigator.of(context).pop();
+              Navigator.of(context).pop();
             },
             child: Text(
               'OK',
@@ -119,5 +120,28 @@ class CartelProblema extends StatelessWidget {
             ),
           ),
         ],
+      );
+}
+
+
+class CartelCargando extends StatelessWidget {
+  const CartelCargando();
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: Text(
+          "Loading...",
+          style: const TextStyle(fontSize: 24),
+        ),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text(
+                'Your account is being created.',
+                style: const TextStyle(fontSize: 18),
+              ),
+            ],
+          ),
+        ),
       );
 }
