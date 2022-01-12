@@ -5,6 +5,7 @@ import 'package:twitter_copycat/src/widgets.dart';
 import '../logica.dart';
 import '../datatypes.dart';
 import 'crear_cuenta_screen.dart';
+import 'log_in_screen.dart';
 
 import 'package:provider/provider.dart';
 import '../../firebase_options.dart';
@@ -40,6 +41,19 @@ class _InitialScreenState extends State<InitialScreen> {
     );
   }
 
+  void _iniciarSesion() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return Consumer<ApplicationState>(
+            builder: (context, appState, _) =>
+                LogInScreen(logIn: appState.logIn),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +66,7 @@ class _InitialScreenState extends State<InitialScreen> {
         body: Column(
           children: [
             TextoInitialScreen("See what's happening in the world right now."),
-            BloqueDeBotones(crearCuenta: _crearCuenta),
+            BloqueDeBotones(crearCuenta: _crearCuenta, iniciarSesion: _iniciarSesion),
           ],
         ));
   }
@@ -62,9 +76,11 @@ class BloqueDeBotones extends StatelessWidget {
   const BloqueDeBotones({
     Key? key,
     required this.crearCuenta,
+    required this.iniciarSesion,
   }) : super(key: key);
 
   final void Function() crearCuenta;
+  final void Function() iniciarSesion;
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +155,7 @@ class BloqueDeBotones extends StatelessWidget {
               GestureDetector(
                   child: Text(" Log in",
                       style: TextStyle(color: Colors.blueAccent)),
-                  onTap: () {}),
+                  onTap: () => iniciarSesion(),),
             ])),
       ],
     );

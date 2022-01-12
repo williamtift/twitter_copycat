@@ -21,6 +21,24 @@ class ApplicationState extends ChangeNotifier {
     FirebaseAuth.instance.userChanges().listen((user) {});
   }
 
+  void logIn(
+      String email,
+      String password,
+      void Function(FirebaseAuthException e) errorCallback,
+      BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      Navigator.of(context).pop();
+      
+    } on FirebaseAuthException catch (e) {
+      errorCallback(e);
+    }
+  }
+
   void createAccount(
       DtUsuario usuario,
       String password,

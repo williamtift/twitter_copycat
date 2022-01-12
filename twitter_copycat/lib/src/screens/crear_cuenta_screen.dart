@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter_copycat/src/colores.dart';
 import 'package:twitter_copycat/src/widgets.dart';
-import '../logica.dart';
 import '../datatypes.dart';
-
-import 'package:provider/provider.dart';
-import '../../firebase_options.dart';
 
 class CrearCuentaScreen extends StatefulWidget {
   const CrearCuentaScreen({
