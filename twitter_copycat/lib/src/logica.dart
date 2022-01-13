@@ -81,33 +81,37 @@ class ApplicationState extends ChangeNotifier {
   void createAccount(
       DtUsuario usuario,
       String password,
-      void Function(FirebaseAuthException e) errorCallback,
+      void Function(Exception e) errorCallback,
       BuildContext context) async {
     try {
-      showDialog<void>(
-          barrierDismissible: false,
-          context: context,
-          builder: (context) {
-            return const CartelCargando();
-          });
+      if (DateTime.parse(usuario.fecha).isAfter(DateTime.now())) {
+        errorCallback(Exception('Your birthdate must be in the past.'));
+      } else {
+        showDialog<void>(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) {
+              return const CartelCargando();
+            });
 
-      var credential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-              email: usuario.email, password: password);
+        var credential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: usuario.email, password: password);
 
-      await credential.user!.updateDisplayName(usuario.name);
+        await credential.user!.updateDisplayName(usuario.name);
 
-      Navigator.of(context).pop();
-      Navigator.of(context).pop();
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
 
-      await FirebaseFirestore.instance
-          .collection('usuarios')
-          .doc(credential.user!.uid)
-          .set({
-        'name': usuario.name,
-        'birthDate': usuario.fecha,
-        'email': usuario.email,
-      });
+        await FirebaseFirestore.instance
+            .collection('usuarios')
+            .doc(credential.user!.uid)
+            .set({
+          'name': usuario.name,
+          'birthDate': usuario.fecha,
+          'email': usuario.email,
+        });
+      }
     } on FirebaseAuthException catch (e) {
       errorCallback(e);
     }
