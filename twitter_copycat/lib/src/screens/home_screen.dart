@@ -100,9 +100,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         const Text(
                           'Settings',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                          ),
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold),
                         ),
                         IconButton(
                           onPressed: () => {
@@ -116,6 +116,63 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ],
                     ),
+                    const Padding (padding: EdgeInsets.only(top: 2, bottom: 5), child: Text(
+                      'Account information',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),),
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Name:',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                )),
+                            Text(widget.usuario.name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                )),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Email:',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                )),
+                            Text(widget.usuario.email,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                )),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Birth Date:',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                )),
+                            Text(widget.usuario.fecha,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                )),
+                          ],
+                        ),
+                      ],
+                    ),
                   ]),
                 ),
               ] +
@@ -123,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical:10),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         children: <Widget>[
           _widgetOptions.elementAt(_selectedIndex),
         ],
