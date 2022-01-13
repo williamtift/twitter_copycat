@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter_copycat/src/colores.dart';
 import 'package:twitter_copycat/src/widgets.dart';
-import '../datatypes.dart';
+import 'forgot_password_screen.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({
     Key? key,
     required this.logIn,
+    required this.forgotPassword,
   }) : super(key: key);
 
   final void Function(
@@ -16,6 +17,11 @@ class LogInScreen extends StatefulWidget {
     void Function(Exception e) error,
     BuildContext context,
   ) logIn;
+
+  final void Function(
+    String email,
+    BuildContext context,
+  ) forgotPassword;
 
   @override
   _LogInScreenState createState() => _LogInScreenState();
@@ -28,6 +34,16 @@ class _LogInScreenState extends State<LogInScreen> {
         builder: (context) {
           return CartelProblema(title, '${(e as dynamic).message}');
         });
+  }
+
+  void _sendRecoveryEmail() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) {
+          return ForgotPasswordScreen(forgotPassword: widget.forgotPassword);
+        },
+      ),
+    );
   }
 
   @override
@@ -55,6 +71,7 @@ class _LogInScreenState extends State<LogInScreen> {
                     (e) => _showErrorDialog(context, 'Failed to log in', e),
                     context);
               },
+              forgotPassword: () => _sendRecoveryEmail(),
             ),
           ],
         ));
@@ -64,8 +81,11 @@ class _LogInScreenState extends State<LogInScreen> {
 class LogInForm extends StatefulWidget {
   const LogInForm({
     required this.logIn,
+    required this.forgotPassword,
   });
   final void Function(String, String) logIn;
+  final void Function() forgotPassword;
+
   @override
   _LogInFormState createState() => _LogInFormState();
 }
@@ -141,31 +161,35 @@ class _LogInFormState extends State<LogInForm> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(bottom: 10, right: 20),
+              padding: const EdgeInsets.only(
+                  top: 40, bottom: 10, right: 20, left: 20),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 40),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                          shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                  side: BorderSide(color: Colors.blueAccent))),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                              Colors.blueAccent)),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          widget.logIn(
-                            _emailController.text,
-                            _passwordController.text,
-                          );
-                        }
-                      },
-                      child: Text('Log in'),
-                    ),
+                  GestureDetector(
+                    child: Text("Forgot Password?",
+                        style: TextStyle(color: Colors.blueAccent)),
+                    onTap: () => widget.forgotPassword(),
+                  ),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                    side:
+                                        BorderSide(color: Colors.blueAccent))),
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            Colors.blueAccent)),
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        widget.logIn(
+                          _emailController.text,
+                          _passwordController.text,
+                        );
+                      }
+                    },
+                    child: Text('Log in'),
                   ),
                 ],
               ),

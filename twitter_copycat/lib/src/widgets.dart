@@ -112,7 +112,6 @@ class CartelProblema extends StatelessWidget {
           StyledButton(
             onPressed: () {
               Navigator.of(context).pop();
-              Navigator.of(context).pop();
             },
             child: Text(
               'OK',

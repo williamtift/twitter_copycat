@@ -38,7 +38,7 @@ class _InitialScreenState extends State<InitialScreen> {
         builder: (context) {
           return Consumer<ApplicationState>(
             builder: (context, appState, _) =>
-                LogInScreen(logIn: appState.logIn),
+                LogInScreen(logIn: appState.logIn, forgotPassword: appState.forgotPassword),
           );
         },
       ),
