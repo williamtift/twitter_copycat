@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:twitter_copycat/src/colores.dart';
 import '../datatypes.dart';
+import '../widgets.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen(
       {Key? key,
       required this.usuario,
+      required this.tweets,
       required this.publicarTweet,
       required this.signOut})
       : super(key: key);
 
   final DtUsuario usuario;
+  final List<Tweet> tweets;
   final void Function(
     String tweet,
   ) publicarTweet;
@@ -35,32 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
-    Center(
-      child: Text(
-        'Home',
-        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-      ),
-    ),
-    Center(
-      child: Text(
-        'Search',
-        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-      ),
-    ),
-    Center(
-      child: Text(
-        'Notifications',
-        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-      ),
-    ),
-    Center(
-      child: Text(
-        'Messages',
-        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-      ),
-    ),
-  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -70,13 +47,41 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _widgetOptions = <Widget>[
+      Column(
+        children: <Widget>[
+          for (var tweet in widget.tweets) ...[
+            TweetTile(name: tweet.name, tweet: tweet.message),
+            Divider(),
+          ],
+        ],
+      ),
+      const Center(
+        child: Text(
+          'Search',
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
+      ),
+      const Center(
+        child: Text(
+          'Notifications',
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
+      ),
+      const Center(
+        child: Text(
+          'Messages',
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+        ),
+      ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.blueAccent,
         elevation: 2,
-        title: FaIcon(FontAwesomeIcons.twitter,
-            size: 35),
+        title: FaIcon(FontAwesomeIcons.twitter, size: 35),
       ),
       //Drawer
       drawer: Drawer(
@@ -118,12 +123,23 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical:10),
         children: <Widget>[
           _widgetOptions.elementAt(_selectedIndex),
         ],
       ),
-
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => PublicarTweetForm(
+              publicarTweet: widget.publicarTweet,
+            ),
+          );
+        },
+        backgroundColor: Colors.blueAccent,
+        child: const FaIcon(FontAwesomeIcons.featherAlt),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -150,6 +166,84 @@ class _HomeScreenState extends State<HomeScreen> {
         unselectedItemColor: colorGrisDeImagenPrueba,
         iconSize: 32,
         onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class PublicarTweetForm extends StatefulWidget {
+  const PublicarTweetForm({Key? key, required this.publicarTweet})
+      : super(key: key);
+
+  final void Function(
+    String tweet,
+  ) publicarTweet;
+
+  @override
+  _PublicarTweetFormState createState() => _PublicarTweetFormState();
+}
+
+class _PublicarTweetFormState extends State<PublicarTweetForm> {
+  final _formKey = GlobalKey<FormState>(debugLabel: '_PublicarTweetFormState');
+  final _tweetController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      actions: <Widget>[
+        IconButton(
+          onPressed: () => {Navigator.of(context).pop()},
+          iconSize: 30.0,
+          icon: const Icon(
+            Icons.close,
+          ),
+        ),
+        IconButton(
+          onPressed: () async {
+            if (_formKey.currentState!.validate()) {
+              widget.publicarTweet(_tweetController.text);
+              Navigator.of(context).pop();
+            }
+          },
+          iconSize: 30.0,
+          icon: const Icon(
+            Icons.done,
+            color: Colors.green,
+          ),
+        ),
+      ],
+      title: const Text('Publicar tweet'),
+      content: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: TextFormField(
+                      controller: _tweetController,
+                      decoration: const InputDecoration(
+                        hintText: 'Escribe tu tweet...',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Ingresar tweet a publicar para continuar.';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

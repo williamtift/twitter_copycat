@@ -7,3 +7,9 @@ class DtUsuario {
   String fecha;
 
 }
+
+class Tweet {
+  Tweet({required this.name, required this.message});
+  final String name;
+  final String message;
+}

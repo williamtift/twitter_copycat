@@ -122,7 +122,6 @@ class CartelProblema extends StatelessWidget {
       );
 }
 
-
 class CartelCargando extends StatelessWidget {
   const CartelCargando();
 
@@ -143,4 +142,69 @@ class CartelCargando extends StatelessWidget {
           ),
         ),
       );
+}
+
+class TweetTile extends StatefulWidget {
+  const TweetTile({
+    Key? key,
+    required this.name,
+    required this.tweet,
+  }) : super(key: key);
+
+  final String name;
+  final String tweet;
+
+  @override
+  _TweetTileState createState() => _TweetTileState();
+}
+
+class _TweetTileState extends State<TweetTile> {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(Icons.account_circle, size: 50),
+      title: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                widget.name,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              Icon(Icons.more_horiz),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 2, bottom: 10),
+            child: Text(
+              widget.tweet,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+      subtitle: Padding(
+        padding: EdgeInsets.only(right: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.comment,
+              size: 16,
+              color: colorGrisDeImagenPrueba,
+            ),
+            FaIcon(FontAwesomeIcons.retweet,
+                size: 16, color: colorGrisDeImagenPrueba),
+            FaIcon(FontAwesomeIcons.heart,
+                size: 16, color: colorGrisDeImagenPrueba),
+            FaIcon(FontAwesomeIcons.externalLinkAlt,
+                size: 16, color: colorGrisDeImagenPrueba),
+          ],
+        ),
+      ),
+    );
+  }
 }

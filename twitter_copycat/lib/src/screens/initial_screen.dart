@@ -49,7 +49,7 @@ class _InitialScreenState extends State<InitialScreen> {
   Widget build(BuildContext context) {
     return Consumer<ApplicationState>(builder: (context, appState, _) {
       if (appState.usuario != null) {
-        return HomeScreen(usuario: appState.usuario!, publicarTweet: appState.publicarTweet, signOut: appState.signOut);
+        return HomeScreen(usuario: appState.usuario!, tweets: appState.tweets, publicarTweet: appState.publicarTweet, signOut: appState.signOut);
       } else {
         return Scaffold(
             appBar: AppBar(

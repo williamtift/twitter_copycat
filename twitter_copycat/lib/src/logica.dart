@@ -22,22 +22,42 @@ class ApplicationState extends ChangeNotifier {
     FirebaseAuth.instance.userChanges().listen((user) {
       if (user != null) {
         sleep(Duration(seconds: 1));
-        //Esta condicion esta porque una vez creas un usuario, demora en guardarse los datos en la base de datos, o cuando te logueas demora en cargarlos
+        if (FirebaseAuth.instance.currentUser!.displayName != null) {
+          //Esta condicion esta porque una vez creas un usuario, demora en guardarse los datos en la base de datos, o cuando te logueas demora en cargarlos
 
-        String uid = FirebaseAuth.instance.currentUser!.uid;
-        String name = FirebaseAuth.instance.currentUser!.displayName!;
-        String email = FirebaseAuth.instance.currentUser!.email!;
+          String uid = FirebaseAuth.instance.currentUser!.uid;
+          String name = FirebaseAuth.instance.currentUser!.displayName!;
+          String email = FirebaseAuth.instance.currentUser!.email!;
 
-        _usuarioSubscription = FirebaseFirestore.instance
-            .collection('usuarios')
-            .doc(uid)
-            .snapshots()
-            .listen((document) {
-          _usuario = DtUsuario(
-              uid, name, email, document.data()!['birthDate'] as String);
-        });
+          _usuarioSubscription = FirebaseFirestore.instance
+              .collection('usuarios')
+              .doc(uid)
+              .snapshots()
+              .listen((document) {
+            _usuario = DtUsuario(
+                uid, name, email, document.data()!['birthDate'] as String);
+            notifyListeners();
+          });
+          _tweetsSubscription = FirebaseFirestore.instance
+              .collection('tweets')
+              .orderBy('timestamp', descending: true)
+              .snapshots()
+              .listen((snapshot) {
+            _tweets = [];
+            snapshot.docs.forEach((document) {
+              _tweets.add(
+                Tweet(
+                  name: document.data()['name'] as String,
+                  message: document.data()['text'] as String,
+                ),
+              );
+            });
+            notifyListeners();
+          });
+        }
       } else {
         _usuario = null;
+        _tweets = [];
       }
       notifyListeners();
     });
@@ -46,8 +66,12 @@ class ApplicationState extends ChangeNotifier {
   DtUsuario? _usuario;
   DtUsuario? get usuario => _usuario;
 
+  List<Tweet> _tweets = [];
+  List<Tweet> get tweets => _tweets;
+
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>?
       _usuarioSubscription;
+  StreamSubscription<QuerySnapshot>? _tweetsSubscription;
 
   void logIn(
       String email,
@@ -78,11 +102,8 @@ class ApplicationState extends ChangeNotifier {
     Navigator.of(context).pop();
   }
 
-  void createAccount(
-      DtUsuario usuario,
-      String password,
-      void Function(Exception e) errorCallback,
-      BuildContext context) async {
+  void createAccount(DtUsuario usuario, String password,
+      void Function(Exception e) errorCallback, BuildContext context) async {
     try {
       if (DateTime.parse(usuario.fecha).isAfter(DateTime.now())) {
         errorCallback(Exception('Your birthdate must be in the past.'));
@@ -113,14 +134,29 @@ class ApplicationState extends ChangeNotifier {
         });
       }
     } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
       errorCallback(e);
     }
   }
 
   void signOut() {
     _usuarioSubscription?.cancel();
+    _tweetsSubscription?.cancel();
     FirebaseAuth.instance.signOut();
   }
 
-  void publicarTweet(String tweet) {}
+  Future<DocumentReference> publicarTweet(String message) {
+    if (_usuario == null) {
+      throw Exception('Must be logged in');
+    }
+
+    return FirebaseFirestore.instance
+        .collection('tweets')
+        .add(<String, dynamic>{
+      'text': message,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'name': FirebaseAuth.instance.currentUser!.displayName,
+      'userId': FirebaseAuth.instance.currentUser!.uid,
+    });
+  }
 }
